@@ -1,0 +1,290 @@
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # azurerm_lb.lb will be created
+  + resource "azurerm_lb" "lb" {
+      + id                   = (known after apply)
+      + location             = "australiaeast"
+      + name                 = "g360-lb"
+      + private_ip_address   = (known after apply)
+      + private_ip_addresses = (known after apply)
+      + resource_group_name  = "g360-rg"
+      + sku                  = "Basic"
+      + sku_tier             = "Regional"
+      + tags                 = {
+          + "Environment" = "test"
+          + "Owner"       = "jaafar"
+          + "Project"     = "g360-autohealing-webtier"
+        }
+
+      + frontend_ip_configuration {
+          + gateway_load_balancer_frontend_ip_configuration_id = (known after apply)
+          + id                                                 = (known after apply)
+          + inbound_nat_rules                                  = (known after apply)
+          + load_balancer_rules                                = (known after apply)
+          + name                                               = "PublicFrontend"
+          + outbound_rules                                     = (known after apply)
+          + private_ip_address                                 = (known after apply)
+          + private_ip_address_allocation                      = (known after apply)
+          + private_ip_address_version                         = (known after apply)
+          + public_ip_address_id                               = (known after apply)
+          + public_ip_prefix_id                                = (known after apply)
+          + subnet_id                                          = (known after apply)
+        }
+    }
+
+  # azurerm_lb_backend_address_pool.bepool will be created
+  + resource "azurerm_lb_backend_address_pool" "bepool" {
+      + backend_ip_configurations = (known after apply)
+      + id                        = (known after apply)
+      + inbound_nat_rules         = (known after apply)
+      + load_balancing_rules      = (known after apply)
+      + loadbalancer_id           = (known after apply)
+      + name                      = "g360-bepool"
+      + outbound_rules            = (known after apply)
+    }
+
+  # azurerm_lb_probe.http will be created
+  + resource "azurerm_lb_probe" "http" {
+      + id                  = (known after apply)
+      + interval_in_seconds = 15
+      + load_balancer_rules = (known after apply)
+      + loadbalancer_id     = (known after apply)
+      + name                = "http-probe"
+      + number_of_probes    = 2
+      + port                = 80
+      + probe_threshold     = 1
+      + protocol            = "Http"
+      + request_path        = "/"
+    }
+
+  # azurerm_lb_rule.http_rule will be created
+  + resource "azurerm_lb_rule" "http_rule" {
+      + backend_address_pool_ids       = (known after apply)
+      + backend_port                   = 80
+      + disable_outbound_snat          = false
+      + enable_floating_ip             = false
+      + frontend_ip_configuration_id   = (known after apply)
+      + frontend_ip_configuration_name = "PublicFrontend"
+      + frontend_port                  = 80
+      + id                             = (known after apply)
+      + idle_timeout_in_minutes        = (known after apply)
+      + load_distribution              = (known after apply)
+      + loadbalancer_id                = (known after apply)
+      + name                           = "http-rule-80"
+      + probe_id                       = (known after apply)
+      + protocol                       = "Tcp"
+    }
+
+  # azurerm_linux_virtual_machine_scale_set.web will be created
+  + resource "azurerm_linux_virtual_machine_scale_set" "web" {
+      + admin_username                                    = "azureuser"
+      + computer_name_prefix                              = (known after apply)
+      + custom_data                                       = (sensitive value)
+      + disable_password_authentication                   = true
+      + do_not_run_extensions_on_overprovisioned_machines = false
+      + extension_operations_enabled                      = (known after apply)
+      + extensions_time_budget                            = "PT1H30M"
+      + health_probe_id                                   = (known after apply)
+      + id                                                = (known after apply)
+      + instances                                         = 2
+      + location                                          = "australiaeast"
+      + max_bid_price                                     = -1
+      + name                                              = "g360-vmss"
+      + overprovision                                     = true
+      + platform_fault_domain_count                       = (known after apply)
+      + priority                                          = "Regular"
+      + provision_vm_agent                                = true
+      + resource_group_name                               = "g360-rg"
+      + scale_in_policy                                   = (known after apply)
+      + single_placement_group                            = true
+      + sku                                               = "Standard_B1ls"
+      + tags                                              = {
+          + "Environment" = "test"
+          + "Owner"       = "jaafar"
+          + "Project"     = "g360-autohealing-webtier"
+        }
+      + unique_id                                         = (known after apply)
+      + upgrade_mode                                      = "Rolling"
+      + zone_balance                                      = false
+      + zones                                             = [
+          + "1",
+          + "2",
+        ]
+
+      + admin_ssh_key {
+          + public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDdoNPS6Ga5A6+Bol+/nYz2g56J6A9HpmyXWfahqVjjTkuCjx+1LZMN5BxGAAoThjC4OkQU7jQ1KTKczWJ2taAoz2fw8YJH+HBpVexUqs55tsGElvFdeLlqVw7XcBL6olJVaDOAZNFlVthvm1k77Dzi1gntQTdweXQpu11i6nVBd0fo5C0w+3JoyxJAqDAc7b66oGWYP7nlk7sbfi0FlwPFcTuZQKODNxIK5z3QSt9cGrd0IOZjLOaWH5KritpvkTbe4V8WIxnlPMsX1kI6JmoIhPVdTCE8/i2851wCSQW24M3Bh5gzqKXgjyZweCzqMqd569YjDPpIYLXLHAe+SWTi+2cwrPEUsSEgizFAIKYkiIjRGvtmoNywaJ9wi3bkj+Xc20NiwVrDZXN2XKw6SchQzbXrWtB1a3xWpE8xCBRhMtg9A+9ubDPb8DXVAsuuunnBk6hksWn8xrNVurHj6qV8b9eVGCDdtVFciLEHedR0YsdKdp6VEeZf/+TadgLY/BfL4ZykIxZPOj5CePZ7d2pwzidqGmXg/AR+XRa9sS/bxp26QOLX+qfuwo9j60Nf74dOWzncEZmDqRxdfGjfd1zYjAPVFqwy5eKnUzrZ4TerK0NfPtFzyh8HQXG1emdTWXlimoIry/FD98e74Yxy2QczPCIBB8NoKRVNj6SN9QvpWQ== jaafar@autogen"
+          + username   = "azureuser"
+        }
+
+      + automatic_instance_repair {
+          + action       = (known after apply)
+          + enabled      = true
+          + grace_period = "PT10M"
+        }
+
+      + network_interface {
+          + enable_accelerated_networking = false
+          + enable_ip_forwarding          = false
+          + name                          = "web-nic"
+          + primary                       = true
+
+          + ip_configuration {
+              + load_balancer_backend_address_pool_ids = (known after apply)
+              + name                                   = "ipconfig"
+              + primary                                = true
+              + subnet_id                              = (known after apply)
+              + version                                = "IPv4"
+            }
+        }
+
+      + os_disk {
+          + caching                   = "ReadWrite"
+          + disk_size_gb              = (known after apply)
+          + storage_account_type      = "Standard_LRS"
+          + write_accelerator_enabled = false
+        }
+
+      + source_image_reference {
+          + offer     = "0001-com-ubuntu-server-jammy"
+          + publisher = "Canonical"
+          + sku       = "22_04-lts"
+          + version   = "latest"
+        }
+    }
+
+  # azurerm_network_security_group.web_nsg will be created
+  + resource "azurerm_network_security_group" "web_nsg" {
+      + id                  = (known after apply)
+      + location            = "australiaeast"
+      + name                = "g360-web-nsg"
+      + resource_group_name = "g360-rg"
+      + security_rule       = [
+          + {
+              + access                                     = "Allow"
+              + description                                = ""
+              + destination_address_prefix                 = "*"
+              + destination_address_prefixes               = []
+              + destination_application_security_group_ids = []
+              + destination_port_range                     = "22"
+              + destination_port_ranges                    = []
+              + direction                                  = "Inbound"
+              + name                                       = "allow_ssh_22"
+              + priority                                   = 110
+              + protocol                                   = "Tcp"
+              + source_address_prefix                      = "*"
+              + source_address_prefixes                    = []
+              + source_application_security_group_ids      = []
+              + source_port_range                          = "*"
+              + source_port_ranges                         = []
+            },
+          + {
+              + access                                     = "Allow"
+              + description                                = ""
+              + destination_address_prefix                 = "*"
+              + destination_address_prefixes               = []
+              + destination_application_security_group_ids = []
+              + destination_port_range                     = "80"
+              + destination_port_ranges                    = []
+              + direction                                  = "Inbound"
+              + name                                       = "allow_http_80"
+              + priority                                   = 100
+              + protocol                                   = "Tcp"
+              + source_address_prefix                      = "*"
+              + source_address_prefixes                    = []
+              + source_application_security_group_ids      = []
+              + source_port_range                          = "*"
+              + source_port_ranges                         = []
+            },
+        ]
+      + tags                = {
+          + "Environment" = "test"
+          + "Owner"       = "jaafar"
+          + "Project"     = "g360-autohealing-webtier"
+        }
+    }
+
+  # azurerm_public_ip.lb_pip will be created
+  + resource "azurerm_public_ip" "lb_pip" {
+      + allocation_method       = "Static"
+      + ddos_protection_mode    = "VirtualNetworkInherited"
+      + fqdn                    = (known after apply)
+      + id                      = (known after apply)
+      + idle_timeout_in_minutes = 4
+      + ip_address              = (known after apply)
+      + ip_version              = "IPv4"
+      + location                = "australiaeast"
+      + name                    = "g360-lb-pip"
+      + resource_group_name     = "g360-rg"
+      + sku                     = "Basic"
+      + sku_tier                = "Regional"
+      + tags                    = {
+          + "Environment" = "test"
+          + "Owner"       = "jaafar"
+          + "Project"     = "g360-autohealing-webtier"
+        }
+    }
+
+  # azurerm_resource_group.rg will be created
+  + resource "azurerm_resource_group" "rg" {
+      + id       = (known after apply)
+      + location = "australiaeast"
+      + name     = "g360-rg"
+      + tags     = {
+          + "Environment" = "test"
+          + "Owner"       = "jaafar"
+          + "Project"     = "g360-autohealing-webtier"
+        }
+    }
+
+  # azurerm_subnet.subnet will be created
+  + resource "azurerm_subnet" "subnet" {
+      + address_prefixes                               = [
+          + "10.0.1.0/24",
+        ]
+      + default_outbound_access_enabled                = true
+      + enforce_private_link_endpoint_network_policies = (known after apply)
+      + enforce_private_link_service_network_policies  = (known after apply)
+      + id                                             = (known after apply)
+      + name                                           = "g360-subnet"
+      + private_endpoint_network_policies              = (known after apply)
+      + private_endpoint_network_policies_enabled      = (known after apply)
+      + private_link_service_network_policies_enabled  = (known after apply)
+      + resource_group_name                            = "g360-rg"
+      + virtual_network_name                           = "g360-vnet"
+    }
+
+  # azurerm_subnet_network_security_group_association.subnet_nsg will be created
+  + resource "azurerm_subnet_network_security_group_association" "subnet_nsg" {
+      + id                        = (known after apply)
+      + network_security_group_id = (known after apply)
+      + subnet_id                 = (known after apply)
+    }
+
+  # azurerm_virtual_network.vnet will be created
+  + resource "azurerm_virtual_network" "vnet" {
+      + address_space       = [
+          + "10.0.0.0/16",
+        ]
+      + dns_servers         = (known after apply)
+      + guid                = (known after apply)
+      + id                  = (known after apply)
+      + location            = "australiaeast"
+      + name                = "g360-vnet"
+      + resource_group_name = "g360-rg"
+      + subnet              = (known after apply)
+      + tags                = {
+          + "Environment" = "test"
+          + "Owner"       = "jaafar"
+          + "Project"     = "g360-autohealing-webtier"
+        }
+    }
+
+Plan: 11 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + lb_public_ip = (known after apply)
